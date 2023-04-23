@@ -1,0 +1,229 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mazer Admin Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+    <link rel="stylesheet" href="{% static 'vendors/iconly/bold.css' %}">
+
+    <link rel="stylesheet" href="{% static 'vendors/perfect-scrollbar/perfect-scrollbar.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/bootstrap-icons/bootstrap-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicon.svg' %}" type="image/x-icon">
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- NAV -->
+        <div id="sidebar" class="active">
+            <div class="sidebar-wrapper active">
+                <div class="sidebar-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="logo">
+                            <a href="{% url 'dashboard' %}"><img src="{% static 'images/logo/logo.png' %}" alt="Logo" srcset=""></a>
+                        </div>
+                        <div class="toggler">
+                            <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-menu">
+                    <ul class="menu">
+                        <li class="sidebar-title">Menu</li>
+
+                        <li class="sidebar-item active ">
+                            <a href="{% url 'dashboard' %}" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="bi bi-hexagon-fill"></i>
+                                <span>Produtos</span>
+                            </a>
+                            <ul class="submenu ">
+                                <li class="submenu-item ">
+                                    <a href="{% url 'meus_produtos' %}">Meus produtos</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a href="{% url 'registrar_produtos' %}">Registrar produto</a>
+                                </li>
+                                <li class="submenu-item ">
+                                    <a href="{% url 'meus_produtos' %}">Editar produto</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item">
+                            <a href="{% url 'logout' %}" class='sidebar-link'>
+                                <i class="bi bi-box-arrow-left"></i>
+                                <span>Sair</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+                <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+            </div>
+        </div>
+        <!-- FIM NAV -->
+
+        <!-- CORPO DA PÁGINA -->
+        <div id="main">
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
+            </header>
+
+            <div class="page-heading">
+                <h3>Meus produtos</h3>
+            </div>
+            <div class="page-content">
+                <section class="row">
+                    <div class="col-12 col-lg-9">
+
+                        <!-- BARRA DE PESQUISA -->
+                        <div class="row">
+                            <form>
+                                <div class="card p-3 d-flex flex-row">
+                                    <input class="form-control mr-sm-2" type="search" style="margin-left: 20px;" id="search" name="search"
+                                    placeholder="Digite aqui o que deseja consultar" aria-label="Search">
+
+                                    <button class="btn btn-outline-primary my-2 my-sm-0 mt-3 " type="submit">Consultar</button>
+                                </div>
+                            </form>  
+                        </div>
+                        <!-- FIM BARRA DE PESQUISA -->
+
+                        <div class="row">
+                            <!-- QUADROS -->
+                            {% for i in produtos %}
+                            <div class="col col-lg-4">
+                                <div class="card">
+                                    <div class="m-2">
+                                        <h4 class="mb-0">{{ i.name }}</h4>
+                                        <p class="text-justify">{{ i.categoria }}</p>
+                                        <img src="{{ i.foto_produto.url }}" class="img-fluid rounded" alt="Responsive image">
+                                        <div class= "mt-2">
+                                        </div>
+                                        <div class= "mt-2">
+                                            <p class="text-justify">{{ i.description }}</p>
+                                        </div>
+                                        <div class= "mt-2 btn-primary active text-center rounded">R$ {{ i.price }},00</div>
+                                        <div class="row">
+                                            <a class="col" href="{% url 'editar_produto' i.id %}"><div class="mt-2 btn-success text-center rounded cursor-pointer">Editar</div></a>
+                                        </div>
+                                        <hr>
+                                        <div class= "mt-2">{{ i.email }}</div>
+                                        <div class= "mt-2">
+                                            <p class="text-right" style="text-align: right;">{{ user.username }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <!-- FIM QUADROS -->
+                        </div>
+                        
+                        <p class="text-center mb-0">
+                            <span class="text-primary"><strong> {{ pagina_num.number }} </strong></span> de <span class="text-primary"><strong>{{ produtos.paginator.num_pages }}</strong></span>
+                        </p>
+                
+                        <!--  PAGINAÇÃO -->
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                
+                                {% for i in produtos.paginator.page_range %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ i }}" aria-current="page">
+                                        {{ i }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ produtos.paginator.num_pages  }}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!--  FIM PAGINAÇÃO -->
+                    </div>
+
+                    <!-- USUÁRIOS -->
+                    <div class="col-12 col-lg-3">
+
+                        <!-- USUÁRIO LOGADO-->
+                        <div class="card">
+                            <div class="card-body py-4">
+                                <div class="d-flex align-items-center">
+                                    {% if user_atual.foto_user != '' %}
+                                        <div class="avatar avatar-xl">
+                                            <img src="{{ user_atual.foto_user.url }}" alt="Face 1">
+                                        </div>
+                                    {% else %}
+                                        <div class="avatar avatar-xl">
+                                            <img src="{% static 'images/faces/1.jpg' %}" alt="Face 1">
+                                        </div>
+                                    {% endif %}
+                                    <div class="ms-3 name">
+                                        <h5 class="font-bold">{{ user.first_name }}</h5>
+                                        <h6 class="text-muted mb-0">@{{ user.username }}</h6>
+                                    </div>
+                                </div>
+                                <div class="w-100 mt-3">
+                                    <a href="{% url 'perfil' %}">
+                                        <div class= "btn-success active text-center rounded">Editar</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- FIM USUÁRIO LOGADO -->
+                </section>
+            </div>
+            
+            <!-- FOOTER -->
+            <footer>
+                <div class="footer clearfix mb-0 text-muted">
+                    <div class="float-start">
+                        <p>2021 &copy; Mazer</p>
+                    </div>
+                    <div class="float-end">
+                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
+                                href="http://ahmadsaugi.com">A. Saugi</a></p>
+                    </div>
+                </div>
+            </footer>
+            <!-- FIM FOOTER -->
+
+        </div>
+        <!-- FIM CORPO DA PÁGINA -->
+    </div>
+    <script src="{% static 'vendors/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+    <script src="{% static 'vendors/apexcharts/apexcharts.js' %}"></script>
+    <script src="{% static 'js/pages/dashboard.js' %}"></script>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
